@@ -1,9 +1,10 @@
 <?php
 
-session_start();
 
-session_unset();
-session_destroy();
+session_start();   //запускаем сессию
 
-header("Location: login.php");
-exit;
+session_unset();      //удаляем все переменные из текущей сессии
+session_destroy();    //уничтожаем все данные, связанные с текущей сессией
+
+header("Location: login.php");   //производим перенаправление на login.php
+exit;                //завершаем работу скрипта

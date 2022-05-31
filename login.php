@@ -14,9 +14,9 @@
   <form class="p-5 rounded shadow" style="max-width:30rem; width:100%;" method="POST" action="php/auth.php">
   <h1 class="text-center display-4 pb-5">LOGIN</h1>
   <?php
-    if(isset($_GET['error'])) { ?>
+    if(isset($_GET['error'])) { //если переменная error установлена?>              
   <div class="alert alert-danger" role="alert">
-    <?= htmlspecialchars($_GET['error']); ?>
+    <?= htmlspecialchars($_GET['error']);  //то выводим сообщение об ошибке?>   
   </div>
   <?php } ?>
     <div class="mb-3">

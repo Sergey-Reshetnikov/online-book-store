@@ -1,10 +1,30 @@
 <?php  
-session_start();
+session_start();   //запускаем сессию для получения информации о пользователе
 
 # If the admin is logged in
-if (isset($_SESSION['user_id']) &&
-    isset($_SESSION['user_email'])) {
+if (isset($_SESSION['user_id']) &&            //если в сессии установлен id пользователя
+    isset($_SESSION['user_email'])) {         //и email пользователя
+                                        //то отображаем админ панель сайта
+
+//database connection file
+include "db_conn.php";
+
+  //book helper function
+  include "php/func-book.php";
+  $books = get_all_books($conn);
+
+      //author helper function
+      include "php/func-author.php";
+      $authors = get_all_author($conn);
+
+      //category helper function
+      include "php/func-category.php";
+      $categories = get_all_categories($conn);
+
+
   ?>
+
+  
 
 <!DOCTYPE html>
 <html lang="en">
@@ -38,12 +58,156 @@ if (isset($_SESSION['user_id']) &&
               <a class="nav-link" href="#">Add Author</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="logout.php">Logout</a>
+              <a class="nav-link" href="logout.php">Logout</a>   <!--Если мы хотим выйти, то запускается скрипт logout.php-->
             </li>
           </ul>
         </div>
       </div>
     </nav>
+    <?php
+      if($books == 0) { ?>
+      empty
+      <?php }else { ?>
+    <!-- List of all books -->
+    <h4 class="mt-5">All Books</h4>
+    <table class="table table-bordered shadow">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Description</th>
+          <th>Category</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php 
+        $i = 0;
+        foreach($books as $book) { 
+          $i++;
+          ?>
+
+        
+        <tr>
+        <td><?=$i ?></td>
+        <td>
+          <img width="100" src="uploads/cover/<?=$book['cover']?>">
+          <a class="link-dark d-block text-center" href="uploads/files/<?=$book['file']?>"><?= $book['title'] ?></a>
+          
+        </td>
+        <td>
+          <?php if($authors == 0) {
+            echo "Undefined";}else {
+              foreach($authors as $author) {
+                if($author['id'] == $book['author_id']) {
+                  echo $author['name'];
+                }
+              }
+            }
+              ?>
+        </td>
+        <td><?= $book['description'] ?></td>
+        <td>
+        <?php if($categories == 0) {
+            echo "Undefined";}else {
+              foreach($categories as $category) {
+                if($category['id'] == $book['category_id']) {
+                  echo $category['name'];
+                }
+              }
+            }
+              ?>
+        </td>
+        <td>
+          <a href="#" 
+            class="btn btn-warning">
+            Edit</a>
+          <a href="#" 
+          class="btn btn-danger">
+          Delete</a>
+        </td>
+        </tr>
+        <?php } ?>
+      </tbody>
+    </table>
+    <?php } ?>
+
+    <?php
+      if($categories == 0) { ?>
+      empty
+      <?php }else { ?>
+
+    <!-- List of all categories -->
+    <h4 class="mt-5">All Categories</h4>
+    <table class="table table-bordered shadow">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Category Name</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php 
+            $j = 0;
+            foreach($categories as $category) { 
+            $j++;
+              ?>
+          <tr>
+            <td><?=$j; ?></td>
+            <td><?=$category['name']?></td>
+            <td>
+              <a href="#" 
+              class="btn btn-warning">
+              Edit</a>
+              <a href="#" 
+              class="btn btn-danger">
+              Delete</a>
+            </td>
+          </tr>
+          <?php } ?>
+        </tbody>
+    </table>
+    <?php } ?>
+
+    <?php
+      if($authors == 0) { ?>
+      empty
+      <?php }else { ?>
+
+    <!-- List of all authors -->
+    <h4 class="mt-5">All Authors</h4>
+    <table class="table table-bordered shadow">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Author Name</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php 
+            $k = 0;
+            foreach($authors as $author) { 
+            $k++;
+              ?>
+          <tr>
+            <td><?=$k; ?></td>
+            <td><?=$author['name']?></td>
+            <td>
+              <a href="#" 
+              class="btn btn-warning">
+              Edit</a>
+              <a href="#" 
+              class="btn btn-danger">
+              Delete</a>
+            </td>
+          </tr>
+          <?php } ?>
+        </tbody>
+    </table>
+    <?php } ?>
   </div>
 
 
@@ -51,7 +215,7 @@ if (isset($_SESSION['user_id']) &&
 </body>
 </html>
 
-<?php }else{
-  header("Location: login.php");
+<?php }else{                       //если нет,
+  header("Location: login.php");   //производим перенаправление на login.php
   exit;
 } ?>
